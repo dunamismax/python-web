@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  todo-app:
+    build:
+      context: ./apps/todo-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - shared-volume
+
+  weather-app:
+    build:
+      context: ./apps/weather-app
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+      - "8001:8001"
+    environment:
+      - NODE_ENV=production
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - shared-volume
+
+  shared-volume:
+    image: alpine:latest
+    command: /bin/true
+    volumes:
+      - ./data:/app/data
+
+volumes:
+  data:
+    driver: local
